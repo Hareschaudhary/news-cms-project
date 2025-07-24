@@ -1,0 +1,59 @@
+<footer class="new_footer_area bg_color">
+            <div class="new_footer_top">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-3 col-md-6">
+                            <div class="f_widget company_widget wow fadeInLeft" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInLeft;">
+                                <h3 class="f-title f_600 t_color f_size_18">Get in Touch</h3>
+                                <p>This is a blog website made by Haresh Chaudhary Using MERN Stack ejs and mongoDB</p>
+                                    <a href="/contact-us" class="btn btn_get btn_get_two">Contact</a>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="f_widget about-widget pl_70 wow fadeInLeft" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s; animation-name: fadeInLeft;">
+                                <h3 class="f-title f_600 t_color f_size_18">Categorys</h3>
+                                <ul class="list-unstyled f_list">
+                                      <%category.forEach(element => {%>
+                                      <li><a href='/category/<%=element.slug%>' class='<%= (req.url.includes(element.slug) ? 'active' : '')  %>'><%=element.name%></a></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="f_widget about-widget pl_70 wow fadeInLeft" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s; animation-name: fadeInLeft;">
+                                <h3 class="f-title f_600 t_color f_size_18">Services</h3>
+                                <ul class="list-unstyled f_list">
+                                    <li><a href="http://localhost:3000/admin">Go to Admin Panel</a></li>
+                                    <li><a href="http://localhost:3000/admin/artcle">Add New Article</a></li>
+                                    <li><a href="http://localhost:3000/admin/artcle">Edit Your Article</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 col-md-6">
+                            <div class="f_widget social-widget pl_70 wow fadeInLeft" data-wow-delay="0.8s" style="visibility: visible; animation-delay: 0.8s; animation-name: fadeInLeft;">
+                                <h3 class="f-title f_600 t_color f_size_18">Contact Us</h3>
+                                <div class="f_social_icon">
+                               <a href="mailto:hareschaudhary34@gmail.com" class="fas fa-envelope" title="Email"></a>
+                                <a href="https://github.com/Hareschaudhary/my-project" class="fab fa-github" target="_blank" title="GitHub"></a>
+                                <a href="https://wa.me/+91-9313967317" class="fab fa-whatsapp" target="_blank" title="WhatsApp"></a>
+                                <a href="https://www.linkedin.com/in/haresh-chaudhari-9736682a3" class="fab fa-linkedin" target="_blank" title="LinkedIn"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer_bg">
+                    <div class="footer_bg_one"></div>
+                    <div class="footer_bg_two"></div>
+                </div>
+            </div>
+            <div class="footer_bottom">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-12 text-center">
+                            <p class="mb-0 f_400 text-center"><%=setting.website_description ? setting.website_description : 'This is a blog website made by Haresh Chaudhary Using MERN Stack ejs and mongoDB'%></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>

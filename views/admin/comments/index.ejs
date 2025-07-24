@@ -1,0 +1,148 @@
+<div id="admin-content">
+  <div class="container">
+    <div class="card border-0 shadow-sm">
+      <div class="card-header">
+   <div class="row">
+      <div class="col-md-7">
+        <h1 class="admin-heading"><i class="fa fa-comments"></i> Comments Management</h1>
+      </div>
+      <div class="col-md-5">
+            <input type="text" id="search-input" class="form-control w-100" placeholder="Search..." />
+      </div>
+      </div>
+      <div class="card-body">
+        <div id="commentTable"></div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <!-- view comment model -->
+  <div class="modal fade" id="showcomment" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" id="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Update Comment Status</h5>
+        </div>
+        <div class="modal-body" id="modal-body">
+        </div>
+        <div class="modal-footer" id="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Bootstrap Bundle JS (includes Popper) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Tabulator JS CDN -->
+<script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+<script>
+ const tabledata = <%- JSON.stringify(allComments) %>;
+
+   var table = new Tabulator("#commentTable", {
+    data: tabledata,
+    layout: "fitColumns",
+    pagination: true,
+    paginationSize: 5,
+    paginationSizeSelector: [5, 10, 15],
+    columns: [
+      { title: "S.NO", formatter: "rownum", width: 120, hozAlign: "center", headerHozAlign: "center" },
+      { title: "name", field: "name", hozAlign: "center", headerHozAlign: "center" },
+      { title: "title", field: "article.title", hozAlign: "center", headerHozAlign: "center" },
+      { title: "comment", field: "content", hozAlign: "center", headerHozAlign: "center" },
+      { title: "status", field: "status", hozAlign: "center", headerHozAlign: "center" },
+      { title: "date", field: "createdAt", hozAlign: "center", headerHozAlign: "center" },
+      {
+        title: "Action", formatter: function (cell, formatterParams, onRendered) {
+          return `<button class="btn btn-primary" onclick="openModal('${cell.getData()._id}')"><i class="fa fa-edit"></i></a> 
+        <button class="btn btn-danger delete-category ms-3" type="button" onclick="deleteUcomment('${cell.getData()._id}')"><i class="fa fa-trash"></i></button>`
+        }, hozAlign: "center", headerHozAlign: "center"
+      },
+    ]
+  })
+
+    //  search tabledata
+     document.getElementById("search-input").addEventListener("keyup", function() {
+    let keyword = this.value.toLowerCase();
+    table.setFilter(function(data, filterParams) {
+      return Object.values(data).some(
+        value => String(value).toLowerCase().includes(keyword)
+      );
+    });
+  });
+
+  async function deleteUcomment(id) {
+
+    try {
+      if (confirm("Are you sure you want to delete this category?")) {
+        const response = await fetch(`/admin/delete-comment/${id}`, {
+          method: "DELETE"
+        });
+        if (response.ok) {
+          window.location.reload()
+        }
+        if (response.status == 400) {
+          let data = await response.json();
+          alert(data.message)
+        }
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+ async function openModal(id) {
+  const modal = new bootstrap.Modal(document.getElementById("showcomment"));
+  modal.show();
+
+  const data = await tabledata.find((comment) => comment._id == id);
+
+  const modalbody = document.getElementById("modal-header");
+  modalbody.innerHTML = `<p>User Name : ${data.name}</p>`;
+
+  const modalbody2 = document.getElementById("modal-body");
+  modalbody2.innerHTML = `  
+       <p>Article Title : ${data.article.title}</p>
+       <p>Comment : ${data.content}</p>
+       <p>Email : ${data.email}</p>
+       <p>Commented At : ${data.createdAt}</p>
+       <p>Updated At : ${data.updatedAt != data.createdAt ? data.updatedAt : "No Update"}</p>
+       <label for="statusSelect">Status</label>
+       <select id="statusSelect" class="form-select" onchange="updateStatus('${id}',this.value)">
+         <option value="approved" ${data.status == "approved" ? "selected" : ""}>Approve</option>
+         <option value="rejected" ${data.status == "rejected" ? "selected" : ""}>Reject</option>
+         <option value="pending" ${data.status == "pending" ? "selected" : ""}>Pending</option>
+       </select>
+     `;
+}
+
+async function updateStatus(id,status) {
+ await fetch(`/admin/update-comment-status/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+ }).then((res) => res.json()).then((data) => {
+   if (data.success) {
+     window.location.reload();
+   }
+ }).catch((err) => {
+   console.log(err);
+ });
+
+  const modal = bootstrap.Modal.getInstance(document.getElementById("showcomment"));
+  modal.hide();
+}
+
+
+</script>
+</script>
+
+
+<%- contentFor("tabulatorCss") %>
+  <!-- Tabulator css CDN -->
+  <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet" />

@@ -1,0 +1,99 @@
+
+
+ 
+
+
+<div class="row g-5">
+   <div class="col-12">
+<div class="card rounded-0 border-0 shadow-sm">
+  
+    <img class="card-img-top rounded-0" src='/uploads/<%=artcle.image%>'>
+  <div class="card-body">
+    <div class="blog-card__info">
+   <h2 class="card-title">
+        <%=artcle.title%>
+      </h2>
+    </div>
+      <p class="card-text">
+          <%- artcle .content %>
+      </p>
+  </div>
+     <div class="card-footer d-flex justify-content-between">
+      <ul class="list-inline d-flex gap-4">
+        <li><a class="text-dark" href="/category/<%=artcle.category.slug%>">
+          <i class="fa fa-tags text-warning"></i>
+              <%=artcle.category.name%>
+              </a>
+        </li>
+        <li>
+           <a class="blog-author text-dark" href='/author/<%=artcle.author._id%>'>
+             <i class="fa fa-pencil-square-o text-warning"></i>
+       <%=artcle.author.fullname%>
+      </a>
+        </li>
+      </ul>
+      <ul class="list-inline d-flex gap-4">
+      <li class="published-date">
+        <i class="fa fa-calendar text-warning me-2"></i>   
+      <%=artcle.createAt.toLocaleString('en-GB', { day: 'numeric' , month: 'long' , year: 'numeric'
+          }).split(' ').join(' -')%>
+      </span></li>
+      <li class="comments"><a class="text-dark" href="#ReadComments">
+        <i class="fa fa-comment text-warning me-2"></i>
+        <span class="numero"><%=commentcount%></span></a></li>
+    </ul>
+    </div> 
+
+
+</div>
+    </div>
+  <div class="col-12 mx-auto">
+    <div class="card">
+      <h5 class="card-header">Add Comment</h5>
+      <div class="card-body">
+        <!-- Form Start -->
+        <form action="/single/<%=artcle._id%>/comment" method="POST" autocomplete="off">
+          <div class="mb-3">
+            <label for="" class="form-label">Name</label>
+            <input type="text" value="" name="name" class="form-control" placeholder="Your Name" required>
+          </div>
+          <div class="mb-3">
+            <label for="" class="form-label">Email</label>
+            <input type="email" value="" name="email" class="form-control" placeholder="Your Email" required>
+          </div>
+          <div class="mb-3">
+            <label for="" class="form-label">Comment</label>
+            <textarea name="content" class="form-control"></textarea>
+          </div>
+          <input type="submit" name="save" class="btn btn-primary btn btn--with-icon px-3" value="Add Comment" required />
+           
+        </form>
+        <!-- Form End -->
+      </div>
+    </div>
+  </div>
+  <%if(allcoment.length> 0){%>
+    <div class="col-12 mx-auto" id="ReadComments">
+      <div class="card">
+        <h5 class="card-header">all Comment</h5>
+        <div class="card-body">
+          <%allcoment.forEach(function(comment){%>
+            <div class="card mt-3">
+              <div class="card-body">
+                <h6 class="card-title">
+                 Posted by : <%=comment.name%>
+                </h6>
+                <p class="card-text">
+                 Comment : <%=comment.content%>
+                </p>
+                <p class="card-text">posted on : <%=comment.createdAt.toLocaleString('en-GB', { year: 'numeric' ,
+                    month: '2-digit' , day: '2-digit' , hour: '2-digit' , minute: '2-digit'
+                    }).replace(/(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})/g, '$3/$2/$1 $4:$5' )%></p>
+              </div>
+            </div>
+            <%})%>
+        </div>
+      </div>
+    </div>
+    <%}%>
+</div>

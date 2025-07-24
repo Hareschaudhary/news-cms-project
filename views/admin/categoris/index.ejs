@@ -1,0 +1,83 @@
+<div id="admin-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h1 class="admin-heading"><i class="fa fa-gears"></i> All Categories</h1>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" id="search-input" class="form-control w-100" placeholder="Search..." />
+                            </div>
+                               <div class="col-md-4 text-end">
+                                <div>
+                                    <a class="btn btn-primary" href="/admin/add-category">add category</a>
+                                </div>
+                            </div>
+                        </div>
+                     
+                        <div id="categoriesTable"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- Bootstrap Bundle JS (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Tabulator JS CDN -->
+  <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+  <script>
+    const tabledata =<%-JSON.stringify(allCategory) %>
+   var table = new Tabulator("#categoriesTable", {
+    data:tabledata,
+    layout:"fitColumns",
+    pagination:true,
+    paginationSize:5,
+    paginationSizeSelector:[5, 10, 15],
+    columns:[
+      {title:"S.NO",formatter:"rownum", width:120, hozAlign: "center", headerHozAlign: "center"},
+      {title:"category Name", field:"name", hozAlign: "center", headerHozAlign: "center"},
+      {title:"slug", field:"slug", hozAlign: "center", headerHozAlign: "center"},
+      {title:"Action", formatter:function(cell, formatterParams, onRendered){
+        return `<a class="btn btn-primary" href="/admin/update-category/${cell.getData()._id}"><i class="fa fa-edit"></i></a> 
+        <button class="btn btn-danger delete-category ms-3" type="button" onclick="deleteUcategory('${cell.getData()._id}')"><i class="fa fa-trash"></i></button>`
+      }, hozAlign: "center", headerHozAlign: "center"},
+    ]
+   })
+
+  //  search tabledata
+   document.getElementById("search-input").addEventListener("keyup", function() {
+  let keyword = this.value.toLowerCase();
+  table.setFilter(function(data, filterParams) {
+    return Object.values(data).some(
+      value => String(value).toLowerCase().includes(keyword)
+    );
+  });
+});
+
+   async function deleteUcategory(id){
+    try{
+      if(confirm("Are you sure you want to delete this category?")){
+       const response = await fetch(`/admin/delete-category/${id}`,{
+         method:"DELETE"
+       });
+       if(response.ok){
+        window.location.reload()
+      }
+      if(response.status == 400){
+        let data = await response.json();
+        alert(data.message)
+      }
+      }
+    }catch(err){
+      console.log(err)
+    }
+   }
+  </script>
+  <%- contentFor("tabulatorCss") %>
+    <!-- Tabulator css CDN -->
+  <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet" />
+  <!-- <link rel="stylesheet" href="/css/"> -->

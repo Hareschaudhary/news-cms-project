@@ -1,0 +1,50 @@
+<div id="admin-content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="admin-heading"><i class="fa fa-cog"></i> Settings</h1>
+      </div>
+      <div class="col-md-6 mx-auto">
+        <div class="card">
+          <h5 class="card-header">Settings</h5>
+          <div class="card-body">
+            <form action="/admin/save-settings" method="POST" enctype="multipart/form-data">
+              <div class="mb-3">
+                <label for="article_title" class="form-label">Website Title</label>
+                <% if(settings !=null) {%>
+                  <input type="text" name="website_name" value="<%=settings.website_name%>" class="form-control"
+                    autocomplete="off" required="">
+                  <% } else {%>
+                    <input type="text" name="website_name" class="form-control" autocomplete="off" required="">
+                    <% } %>
+              </div>
+              <div class="mb-3">
+                <div class="d-flex gap-2 align-items-end">
+                  <label for="website_logo" class="form-label">Upload Logo</label>
+                  <% if(settings !=null) {%>
+                    <img src="/uploads/<%=settings.website_image%>" alt="web logo" class="avatar rounded-4 img-fluid"
+                      style="width: 100px;">
+                    <input type="hidden" value="<%=settings.website_image%>" name="website_old_image"
+                      class="form-control">
+                    <% } %>
+                </div>
+                <input type="file" name="website_image" class="form-control" required="">
+              </div>
+              <div class="mb-3">
+                <label for="footer_description" class="form-label">Footer Description</label>
+                <% if(settings !=null) {%>
+                  <input type="text" value="<%=settings.website_description%>" name="website_description"
+                    class="form-control" autocomplete="off" required="">
+                  <% } else {%>
+                    <input type="text" name="website_description" class="form-control" autocomplete="off" required="">
+                    <% } %>
+              </div>
+              <input type="submit" name="submit" class="btn btn-primary" value="Save" required="">
+            </form>
+          
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

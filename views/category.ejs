@@ -1,0 +1,81 @@
+<div class="row g-3">
+    <%artcle.data.forEach(element=> {%>
+        <div class="col-12">
+            <article class="blog-card">
+                <div class="blog-card__background">
+                    <div class="card__background--wrapper">
+                        <div class="card__background--main"
+                            style="background-image: url('/uploads/<%=element.image%>');">
+                            <div class="card__background--layer"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="blog-card__head">
+                    <span class="date__box">
+                        <span class="date__day">
+                            <%=element.createAt.toLocaleString('en-GB', { day: 'numeric' }).split(' ').join(' -')%>
+                        </span>
+                        <span class="date__month">
+                            <%=element.createAt.toLocaleString('en-GB', {month: 'long' }).split(' ').join(' -')%>
+                        </span>
+                    </span>
+                </div>
+                <div class="blog-card__info">
+                    <a href="/single/<%=element._id%>" class="text-decoration-none">
+                        <h5>
+                            <%=element.title%>
+                        </h5>
+                    </a>
+                    <p>
+                        <a href="/author/<%=element.author._id%>" class="icon-link mr-3">
+                            <i class="fa fa-pencil-square-o"></i>
+                            <%=element.author.fullname%>
+                        </a>
+                        <a href="/category/<%=element.category.slug%>" class="icon-link">
+                            <i class="fa fa-tags"></i>
+                            <%=element.category.name%>
+                        </a>
+                    </p>
+                    <p>
+                        <%- element.content.substring(0, 400) + "..." %>
+                    </p>
+                    <a href="/single/<%=element._id%>" class="btn btn--with-icon"><i
+                            class="btn-icon fa fa-long-arrow-right"></i>READ MORE</a>
+                </div>
+            </article>
+        </div>
+        <% }); %>
+            <!-- paginaction -->
+            <div class="col-12 my-5">
+                <nav>
+                    <ul class="pagination justify-content-center gap-3">
+                        <!-- Previous Button -->
+                        <li class="page-item  <%= artcle.hasPrevPage ? '' : 'disabled' %>">
+                            <a class="page-link " href="?search=<%=search%>&page=<%= artcle.prevPage || 1 %>"
+                                tabindex="-1" style="border-radius: 50rem 0px 0px 50rem;">Previous</a>
+                        </li>
+                        <% const maxPagesToShow=4; let startPage=Math.max(1, artcle.currentPage -
+                            Math.floor(maxPagesToShow / 2)); let endPage=startPage + maxPagesToShow - 1; if (endPage>
+                            artcle.totalPages) {
+                            endPage = artcle.totalPages;
+                            startPage = Math.max(1, endPage - maxPagesToShow + 1);
+                            }
+                         %>
+                        <!-- Numbered Page Links -->
+                        <% for (let i=startPage; i <=endPage; i++) { %>
+                            <li class="page-item rounded-circle <%= artcle.currentPage === i ? 'active' : '' %>">
+                                <a class="page-link rounded-circle" href="?search=<%=search%>&page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                        <% } %>
+                        <!-- Next Button -->
+                        <li class="page-item <%= artcle.hasNextPage ? '' : 'disabled' %>">
+                            <a class="page-link px-4"
+                                href="?search=<%=search%>&page=<%= artcle.nextPage || artcle.totalPages %>"
+                                style="border-radius: 0rem 50rem 50rem 0rem;">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+</div>
