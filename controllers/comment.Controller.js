@@ -23,7 +23,7 @@ const allComments = async (req, res, next) => {
           // find all setting
                 const settings = await settingmodels.findOne({});
         // return res.json({ allComments });
-        res.render("admin/comments/index", { role: req.role, fullname: req.fullname, allComments , settings });
+        res.render("admin/comments/index", { role: req.role, fullname: req.fullname, allComments , settings ,req: req});
     } catch (error) {
    return next({
             message: "server error",

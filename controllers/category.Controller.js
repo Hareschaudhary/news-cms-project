@@ -10,7 +10,7 @@ const allCategorys = async (req, res, next) => {
 
         // find all setting
         const settings = await settingmodels.findOne({});
-        res.render("admin/categoris/index", { role: req.role, fullname: req.fullname, allCategory, settings });
+        res.render("admin/categoris/index", { role: req.role, fullname: req.fullname, allCategory, settings ,req: req});
     } catch (error) {
         // res.status(500).send("server error");
         return next({
@@ -25,7 +25,7 @@ const allCategorys = async (req, res, next) => {
 const addCategoryPage = async (req, res) => {
     // find all setting
     const settings = await settingmodels.findOne({});
-    res.render("admin/categoris/create", { role: req.role, fullname: req.fullname, errors: [], settings });
+    res.render("admin/categoris/create", { role: req.role, fullname: req.fullname, errors: [], settings ,req: req});
 }
 
 const addCategory = async (req, res, next) => {
@@ -38,7 +38,8 @@ const addCategory = async (req, res, next) => {
             role: req.role,
             fullname: req.fullname,
             errors: errors.array(),
-            settings
+            settings,
+            req: req
         });
     }
     try {
@@ -66,7 +67,7 @@ const updateCategoryPage = async (req, res, next) => {
 
         // find all setting
         const settings = await settingmodels.findOne({});
-        res.render("admin/categoris/update", { role: req.role, fullname: req.fullname, category: user, errors: [], settings });
+        res.render("admin/categoris/update", { role: req.role, fullname: req.fullname, category: user, errors: [], settings ,req: req});
     } catch (err) {
         return next({
             message: "server error",
@@ -87,7 +88,8 @@ const updateCategory = async (req, res, next) => {
             fullname: req.fullname,
             category: category,
             errors: errors.array(),
-            settings
+            settings,
+            req: req
         });
     }
     try {

@@ -2,19 +2,19 @@
   <div class="container">
         <div class="card border-0 shadow-sm">
           <div class="card-header">
-            <div class="row">
-              <div class="col-md-4">
+            <div class="row g-4">
+              <div class="col-md-4 order-sm-0 order-0">
                 <h1 class="admin-heading"><i class="fa fa-file-text"></i> All Articles</h1>
               </div>
-              <div class="col-md-4">
+              <div class="col-6 col-md-4 order-sm-1 order-1">
                 <input type="search" id="search-input" class="form-control w-100" placeholder="Search..." />
               </div>
-              <div class="col-md-4">
+              <div class="col-6 col-md-4 order-sm-2 order-2">
                 <a class="add-new" href="/admin/add-artcle">Add New Article</a>
               </div>
             </div>
           </div>
-          <div class="card-body">
+          <div class="card-body overflow-auto">
             <div id="articleTable"></div>
           </div>
         </div>
@@ -33,9 +33,10 @@
     pagination: true,
     paginationSize: 5,
     paginationSizeSelector: [5, 10, 15],
+    
     columns: [
       { title: "S.NO", formatter: "rownum", width: 120, hozAlign: "center", headerHozAlign: "center" },
-      { title: "Title", field: "title", hozAlign: "center", headerHozAlign: "center" },
+      { title: "Title", field: "title", hozAlign: "center", headerHozAlign: "center"},
       { title: "Category", field: "category.name", hozAlign: "center", headerHozAlign: "center" },
       { title: "Author", field: "author.fullname", hozAlign: "center", headerHozAlign: "center" },
       {

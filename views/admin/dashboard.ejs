@@ -2,8 +2,9 @@
       <div class="container">
           <div class="row">
               <div class="col-md-12">
-                  <h1 class="admin-heading mb-3"><i class="fa fa-cubes"></i>Dashboard | <small>Hello <%=fullname%></small></h1>
+                  <h1 class="admin-heading mb-3"><i class="fa fa-cubes"></i> <small>Hello <%=fullname%></small></h1>
               </div>
+              
               <div class="col-md-3">
                   <div class="admin-block" style="background-color: #CFE2FF;">
                     <i class="fa fa-file-text"></i>
@@ -16,6 +17,13 @@
                     <i class="fa fa-gears"></i>
                     <h4>Categories</h4>
                     <h1><%= allCategoriesCount %></h1>
+                  </div>
+              </div>
+               <div class="col-md-3">
+                  <div class="admin-block" style="background-color: #eceff3;">
+                    <i class="fa fa-gears"></i>
+                    <h4>All Comments</h4>
+                    <h1>4</h1>
                   </div>
               </div>
               <%if(role=="admin" ){%>

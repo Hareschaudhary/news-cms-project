@@ -26,7 +26,8 @@ const allArtcles = async (req, res, next) => {
             artcles,
             role: req.role,
             fullname: req.fullname,
-            settings
+            settings,
+            req: req
         });
     } catch (error) {
         return next({
@@ -50,7 +51,8 @@ const addArtclePage = async (req, res, next) => {
                 fullname: req.fullname,
                 errors: [],
                 olddata: null,
-                settings
+                settings,
+                req: req
             });
     } catch (err) {
         return next({
@@ -75,7 +77,8 @@ const addArtcle = async (req, res, next) => {
                 fullname: req.fullname,
                 errors: errors.array(),
                 olddata: req.body,
-                settings
+                settings,
+                req: req
             });
     }
     try {
@@ -127,7 +130,8 @@ const updateArtclePage = async (req, res, next) => {
             role: req.role,
             fullname: req.fullname,
             errors: [],
-            settings
+            settings,
+            req: req
         });
     } catch (error) {
         return next({
@@ -152,7 +156,8 @@ const updateArtcle = async (req, res, next) => {
             role: req.role,
             fullname: req.fullname,
             errors: errors.array(),
-            settings
+            settings,
+            req: req
         });
     }
     try {

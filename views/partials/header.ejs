@@ -3,7 +3,7 @@
   <nav class="navbar">
     <div class="container">
     <div class="nav-brand d-flex align-items-center justify-content-start gap-2">
-        <div class="nav-logo">
+            <div class="nav-logo">
             <img src="/uploads/<%=setting.website_image%>" alt="<%=setting.website_name%>" class="rounded-circle" style="width: 30px;height: 30px;">
             </div>
             <div class="logo">
@@ -43,34 +43,40 @@
     </div>
 
     </nav>
-    <div class="mobile-menu">
-        <div class="menu-header">
+    <!-- mobile menu -->
+    <div class="mobile-menu " style="z-index: 9999;">
+        <div class="menu-header d-flex">
+                <div class="nav-logo">
+            <img src="/uploads/<%=setting.website_image%>" alt="<%=setting.website_name%>" class="rounded-circle" style="width: 30px;height: 30px;">
+            </div>
             <div class="logo">
                 <span class="logo-text"><%=setting.website_name%></span>
             </div>
-            <button class="close-menu">
-                <span class="close-icon"></span>
-            </button>
+                <button class="mobile-toggle btn  btn-close text-white border border-1 border-white">
+                    <i class="fas fa-times  fs-4"></i>
+                </button>
         </div>
         <div class="menu-links">
-            <a href="/" class="menu-link active">
+            <a href="/" class="menu-link <%= (req.url === '/' ? 'active' : '')  %>">
                 <span>Home</span>
             </a>
            <%category.forEach(element => {%>
-          <a href='/category/<%=element.slug%>' class="menu-link">
+          <a href='/category/<%=element.slug%>' class="menu-link <%= (req.url.includes(element.slug) ? 'active' : '')  %>">
             <span>
                  <%=element.name%>
             </span>
           </a>
           <% }); %>
-             <button class="git-button py-2 px-3">
+          <div class="d-flex gap-2">
+          <button class="git-button py-2 px-3 w-50">
             <i class="fa fa-envelope mr-2 text-white"></i>
             <span>Contact</span>
         </button>
-         <button class="git-button py-2 px-3">
+         <button class="git-button py-2 px-3 w-50">
             <i class="fa fa-github mr-2 text-white"></i>
             <span>Git Hub</span>
         </button>
+          </div>
         </div>
        
     </div>

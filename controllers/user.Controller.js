@@ -60,7 +60,7 @@ const adminLogin = async (req, res, next) => {
                         });
                 }
 
-                const token = jwt.sign({ id: user._id, fullname: user.fullname, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                const token = jwt.sign({ id: user._id, fullname: user.fullname, role: user.role}, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 res.cookie("token", token, {
                         httpOnly: true,
@@ -68,11 +68,13 @@ const adminLogin = async (req, res, next) => {
                 })
                 res.redirect("/admin/dashboard");
         } catch (err) {
+                console.log(err);
                 return next({
                         message: "server error",
                         status: 500,
                         error: err
                 });
+
         }
 }
 
@@ -103,7 +105,8 @@ const dashboard = async (req, res, next) => {
                         allUsersCount,
                         allArtclesCount,
                         allCategoriesCount,
-                        settings
+                        settings,
+                        req: req
                 });
         } catch (error) {
                 return next({
@@ -122,7 +125,8 @@ const settings = async (req, res, next) => {
                 res.render("admin/settings", {
                         settings,
                         role: req.role,
-                        fullname: req.fullname
+                        fullname: req.fullname,
+                        req: req
                 });
         } catch (error) {
                 // console.log(error);
@@ -187,7 +191,7 @@ const allUsers = async (req, res, next) => {
                 const users = await userModels.find({});
                   // find all setting
         const settings = await settingmodels.findOne({});
-                res.render("admin/users/index", { users, role: req.role, fullname: req.fullname, settings });
+                res.render("admin/users/index", { users, role: req.role, fullname: req.fullname, settings,req: req });
         } catch (error) {
                 return next({
                         message: "server error",
@@ -198,7 +202,7 @@ const allUsers = async (req, res, next) => {
 }
 
 const addUserPage = async (req, res) => {
-        res.render("admin/users/create", { role: req.role, fullname: req.fullname, errors: [] });
+        res.render("admin/users/create", { role: req.role, fullname: req.fullname, errors: [] ,req:req});
 }
 
 const addUser = async (req, res, next) => {
@@ -207,7 +211,8 @@ const addUser = async (req, res, next) => {
                 return res.render("admin/users/create", {
                         role: req.role,
                         fullname: req.fullname,
-                        errors: errors.array()
+                        errors: errors.array(),
+                        req: req
                 });
         }
 
@@ -237,7 +242,7 @@ const updateUserPage = async (req, res, next) => {
 
                         });
                 }
-                res.render("admin/users/update", { user, role: req.role, fullname: req.fullname, errors: [] });
+                res.render("admin/users/update", { user, role: req.role, fullname: req.fullname, errors: [] ,req:req});
         } catch (err) {
                 // console.log(err);
                 // res.status(500).send("internal server error");
