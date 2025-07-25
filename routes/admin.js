@@ -50,6 +50,7 @@ import{
 import isLogin from '../midelware/isLogin.js';
 import isAdmin from '../midelware/isAdmin.js';
 import upload from '../midelware/fileLoad.js';
+import uploadToCloudinary from '../utilitis/cloudinaryUpload.js';
 
 // import form validaction
 import {
@@ -88,9 +89,9 @@ router.delete('/delete-category/:id',isLogin,isAdmin,deleteCategory);
 //article CRUD routes
 router.get('/artcle',isLogin, allArtcles);
 router.get('/add-artcle',isLogin, addArtclePage);
-router.post('/add-artcle',isLogin,upload.single("image"),articleValidation, addArtcle);
+router.post('/add-artcle',isLogin,upload.single("image"),uploadToCloudinary(),articleValidation, addArtcle);
 router.get('/update-artcle/:id',isLogin, updateArtclePage);
-router.post('/update-artcle/:id',isLogin,upload.single("image"),articleValidation, updateArtcle);
+router.post('/update-artcle/:id',isLogin,upload.single("image"),uploadToCloudinary(),articleValidation, updateArtcle);
 router.delete('/delete-artcle/:id',isLogin, deleteArtcle);
 
 //comments routes

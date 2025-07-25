@@ -18,7 +18,7 @@
         <%letestnews.forEach(element => {%>
               <div class="recent-post">
             <a class="post-img" href="/single/<%=element._id%>">
-                <img src="/uploads/<%=element.image%>" alt="" />
+                <img src="<%=element.image%>" alt="" />
             </a>
             <div class="post-content">
                 <h5><a href="/single/<%=element._id%>" class="text-dark"><%=element.title.substring(0, 50)%></a></h5>

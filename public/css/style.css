@@ -597,7 +597,9 @@ border: 3px solid var(--main-color);
   position: relative;
   transition: 300ms ease-in-out;
   background-repeat: no-repeat;
-  background-size: cover;
+  @media (min-width: 576px) {
+   background-size: cover; 
+  }
 }
 .blog-card .card__background--layer {
   z-index: 0;

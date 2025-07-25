@@ -5,6 +5,7 @@ import settingmodels from "../models/setting.js"
 import { validationResult } from "express-validator";
 import fs from "fs";
 import { fileURLToPath } from 'url';
+import { v2 as cloudinary } from 'cloudinary';
 
 // Recreate __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -70,6 +71,7 @@ const addArtcle = async (req, res, next) => {
 
         // find all setting
         const settings = await settingmodels.findOne({});
+
         return res.render("admin/artcles/create",
             {
                 categories,
@@ -88,10 +90,10 @@ const addArtcle = async (req, res, next) => {
             content,
             category,
             author: req.id,
-            image: req.file.filename
+            image: req.cloudinaryUrl || null
         })
         await artcle.save();
-        res.redirect("/admin/artcle");
+        res.redirect("/admin/artcle",);
     } catch (error) {
         return next({
             message: "server error",
@@ -183,15 +185,18 @@ const updateArtcle = async (req, res, next) => {
         artcle.content = content
         artcle.category = category
         if (req.file) {
-            artcle.image = req.file.filename;
-            let newpath = path.join(__dirname, `../public/uploads/${oldImage}`);
-            fs.unlink(newpath, (err) => {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log("file deleted");
+            const oldImagePublicId = oldImage.split('/').pop().split('.')[0];
+            if (oldImagePublicId) {
+                try {
+                    await cloudinary.uploader.destroy(oldImagePublicId);
+                    console.log("Deleted from Cloudinary:", oldImagePublicId);
+                } catch (err) {
+                    if (err.message !== 'not found') {
+                        console.log("Error deleting from Cloudinary:", err);
+                    }
                 }
-            });
+            }
+            artcle.image = req.cloudinaryUrl;
         }
         await artcle.save();
         res.redirect("/admin/artcle");
@@ -222,15 +227,17 @@ const deleteArtcle = async (req, res, next) => {
                 });
             }
         }
-        let oldpath = await path.join(__dirname, `../public/uploads/${artcle.image}`);
-
-        fs.unlink(oldpath, (err) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log("file deleted");
+        const oldImagePublicId = artcle.image.split('/').pop().split('.')[0];
+        if (oldImagePublicId) {
+            try {
+                await cloudinary.uploader.destroy(oldImagePublicId);
+                console.log("Deleted from Cloudinary:", oldImagePublicId);
+            } catch (err) {
+                if (err.message !== 'not found') {
+                    console.log("Error deleting from Cloudinary:", err);
+                }
             }
-        });
+        }
         await newsModels.findByIdAndDelete(req.params.id);
         res.send({ success: true });
     } catch (error) {
