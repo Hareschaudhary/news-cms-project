@@ -2,6 +2,7 @@ import userModels from "../models/users.js";
 import newsModels from "../models/news.js";
 import categoryModels from "../models/categoris.js";
 import settingmodels from "../models/setting.js";
+import commentModels from "../models/comment.js";
 import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -10,6 +11,7 @@ import fs from "fs";
 import path from "path";
 dotenv.config();
 import { fileURLToPath } from 'url';
+import { allComments } from "./comment.Controller.js";
 
 
 // Recreate __dirname
@@ -88,13 +90,18 @@ const dashboard = async (req, res, next) => {
                 let allUsersCount = ""
                 let allArtclesCount = ""
                 let allCategoriesCount = ""
+                let allCommentsCount = ""
                 if (req.role === "admin") {
                         allUsersCount = await userModels.countDocuments({});
                         allArtclesCount = await newsModels.countDocuments({});
                         allCategoriesCount = await categoryModels.countDocuments({});
+                        allCommentsCount = await commentModels.countDocuments({});
                 } else {
                         allArtclesCount = await newsModels.countDocuments({ author: req.id });
                         allCategoriesCount = await categoryModels.countDocuments({});
+                        const  allArtcles = await newsModels.find({ author: req.id });
+                        let allArtclesid = allArtcles.map(allArtcles => allArtcles._id);
+                        allCommentsCount = await commentModels.countDocuments({ article: { $in: allArtclesid } });
                 }
 
                 // find all setting
@@ -106,7 +113,8 @@ const dashboard = async (req, res, next) => {
                         allArtclesCount,
                         allCategoriesCount,
                         settings,
-                        req: req
+                        req: req,
+                        allCommentsCount
                 });
         } catch (error) {
                 return next({

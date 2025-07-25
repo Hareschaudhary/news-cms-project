@@ -684,7 +684,33 @@ article .btn {
 }
 
 
-/* admin card*/
+/* navbar admin */
+@media (max-width: 992px) {
+  #navbarNav-admin ul{
+    margin-top: 10px;
+    border-top: 1px solid #fff;
+    padding: 15px 0;
+  }
+#navbarNav-admin ul li{
+  margin: 0 10px;
+  border: 1px solid #fff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+
+}
+#navbarNav-admin .navbar-toggler{
+  background-color: #fff !important;
+}
+#navbarNav-admin .admin-logout{
+  margin: 10px auto !important;
+}
+#navbarNav-admin{
+  text-align: center;
+ 
+}
+  
+}
 
 
 

@@ -191,8 +191,8 @@
 </head>
 
 <body class="h-100">
-
-    <div class="row g-3 g-sm-5 align-items-center position-absolute top-50 start-50 translate-middle w-full">
+<div class="container position-relative " style="height: 100vh;">
+   <div class="row g-3 g-sm-5 align-items-center position-absolute top-50 start-50 translate-middle w-100">
         <div class="col-lg-6">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 790 563" fill="none">
                 <g id="Image">
@@ -678,6 +678,7 @@
 
         </div>
     </div>
+</div>
 
     <!-- loder -->
     <div
@@ -719,9 +720,6 @@
         document.getElementById('contactForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // loder
-            document.querySelector('.loder-container').classList.remove('d-none');
-
             const email = document.getElementById('email').value;
             const subject = document.getElementById('subject').value;
             const message = document.getElementById('message').value;
@@ -743,6 +741,8 @@
                 return;
             }
 
+                // loder
+            document.querySelector('.loder-container').classList.remove('d-none');
             try {
                 const response = await fetch('https://news-cms-project.onrender.com/send-email', {
                     method: 'POST',
@@ -752,7 +752,6 @@
                     body: JSON.stringify({ email, subject, message }),
                 });
                 let data = await response.json();
-                console.log(data);
                 if (response.ok) {
                     document.querySelector('.loder-container').classList.add('d-none');
                     alert('Email sent successfully!');

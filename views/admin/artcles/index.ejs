@@ -2,83 +2,138 @@
   <div class="container">
         <div class="card border-0 shadow-sm">
           <div class="card-header">
-            <div class="row g-4">
-              <div class="col-md-4 order-sm-0 order-0">
-                <h1 class="admin-heading"><i class="fa fa-file-text"></i> All Articles</h1>
+            <div class="row g-4 align-items-center">
+              <div class="col-6  order-sm-0 order-0">
+                <h1 class="admin-heading fs-3 m-0"><i class="fa fa-file-text"></i> All Articles</h1>
               </div>
-              <div class="col-6 col-md-4 order-sm-1 order-1">
-                <input type="search" id="search-input" class="form-control w-100" placeholder="Search..." />
-              </div>
-              <div class="col-6 col-md-4 order-sm-2 order-2">
-                <a class="add-new" href="/admin/add-artcle">Add New Article</a>
+              <div class="col-6  order-sm-2 order-2">
+                <a class="add-new btn btn-primary float-end" href="/admin/add-artcle">Add New Article</a>
               </div>
             </div>
           </div>
-          <div class="card-body overflow-auto">
-            <div id="articleTable"></div>
+          <div class="card-body ">
+<table id="articleTable" class="display responsive nowrap" style="width:100%">
+  <thead>
+    <tr>
+      <th>S.NO</th>
+      <th>Title</th>
+      <th>Category</th>
+      <th>Author</th>
+      <th>Create At</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody class="overflow-hidden"></tbody>
+</table>
           </div>
         </div>
   </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-<!-- Bootstrap Bundle JS (includes Popper) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Tabulator JS CDN -->
-<script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
 <script>
-  const tabledata =<%- JSON.stringify(artcles) %>;
-   var table = new Tabulator("#articleTable", {
-    data: tabledata,
-    layout: "fitColumns",
-    pagination: true,
-    paginationSize: 5,
-    paginationSizeSelector: [5, 10, 15],
-    
-    columns: [
-      { title: "S.NO", formatter: "rownum", width: 120, hozAlign: "center", headerHozAlign: "center" },
-      { title: "Title", field: "title", hozAlign: "center", headerHozAlign: "center"},
-      { title: "Category", field: "category.name", hozAlign: "center", headerHozAlign: "center" },
-      { title: "Author", field: "author.fullname", hozAlign: "center", headerHozAlign: "center" },
-      {
-        title: "Create At", field: "createAt", hozAlign: "center", headerHozAlign: "center", formatter: function (cell, formatterParams, onRendered) {
-          const date = new Date(cell.getData().createAt);
-          return ("0" + date.getDate()).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear() + " " + ("0" + date.getHours()).slice(-2) + ":" + ("0" + date.getMinutes()).slice(-2);
-        }
-      },
-      {
-        title: "Action", formatter: function (cell, formatterParams, onRendered) {
-          return `<a class="btn btn-primary" href="/admin/update-artcle/${cell.getData()._id}"><i class="fa fa-edit"></i></a> 
-        <button class="btn btn-danger delete-article ms-3" type="button" onclick="deletearticle('${cell.getData()._id}')"><i class="fa fa-trash"></i></button>`
-        }, hozAlign: "center", headerHozAlign: "center"
-      },
-    ]
-  })
+  const tableData = <%- JSON.stringify(artcles) %>;
 
-  //  search tabledata
-  document.getElementById("search-input").addEventListener("keyup", function () {
-    let keyword = this.value.toLowerCase();
-    table.setFilter(function (data, filterParams) {
-      return Object.values(data).some(
-        value => String(value).toLowerCase().includes(keyword)
-      );
+  $(document).ready(function () {
+    let table = $('#articleTable').DataTable({
+      data: tableData,
+      responsive: true,
+      pageLength: 5,
+      lengthMenu: [5, 10, 15],
+      searching: true,
+        ordering: true,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + 1;
+          },
+          className: 'text-sm-center',
+           responsivePriority: 1
+        },
+     {
+          data: 'title',
+          className: 'text-sm-center',
+           responsivePriority: 3,
+          render: function (data) {
+            if (!data) return '';
+            const words = data.trim().split(/\s+/);
+            if(window.innerWidth < 576){
+              if (words.length <= 4) return data;
+              return words.slice(0, 4).join(' ') + '...';
+            }
+            if (words.length <= 10) return data;
+            return words.slice(0, 10).join(' ') + '...';
+          }
+        },
+        { 
+          data: 'category.name', 
+          render: function (data, type, row) {
+            return row.category?.name || '';
+          },
+          className: 'text-sm-center',
+           responsivePriority: 4
+        },
+        {
+          data: 'author.fullname',
+          render: function (data, type, row) {
+            return row.author?.fullname || '';
+          },
+          className: 'text-sm-center',
+          responsivePriority: 2
+        },
+        {
+          data: 'createAt',
+          render: function (data) {
+            const date = new Date(data);
+            return date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          },
+          className: 'text-sm-center',
+         responsivePriority: 5
+        },
+        {
+          data: '_id',
+          render: function (data, type, row) {
+            return `
+              <a class="btn btn-primary" href="/admin/update-artcle/${data}">
+                <i class="fa fa-edit"></i>
+              </a>
+              <button class="btn btn-danger delete-article ms-2" onclick="deletearticle('${data}')">
+                <i class="fa fa-trash"></i>
+              </button>
+            `;
+          },
+          orderable: false,
+          className: 'text-sm-center text-end',
+           responsivePriority: 2
+        }
+      ]
     });
+
   });
 
+  
   async function deletearticle(id) {
     try {
-      if (confirm("Are you sure you want to delete this category?")) {
+      if (confirm("Are you sure you want to delete this article?")) {
         const response = await fetch(`/admin/delete-artcle/${id}`, {
           method: "DELETE"
         });
         if (response.ok) {
-          window.location.reload()
+          location.reload();
+        } else {
+          alert("Failed to delete article.");
         }
       }
     } catch (err) {
-      console.log(err)
+      console.error(err);
     }
   }
 </script>
+
 <%- contentFor("tabulatorCss") %>
-  <!-- Tabulator css CDN -->
-  <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet" />
+  <!-- datatable css CDN -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">

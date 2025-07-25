@@ -14,9 +14,9 @@
   <!-- Custom stlylesheet -->
   <link rel="stylesheet" href="/css/style.css">
 
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
   <%-typeof tabulatorCss=="undefined" ? "" : tabulatorCss%>
     <%-typeof summernoteCss=="undefined" ? "" : summernoteCss%>
 </head>
@@ -26,52 +26,51 @@
 
   <nav class="navbar navbar-expand-lg bg-dark">
     <div class="container">
-      <div class="d-flex align-items-center justify-content-between w-100">
-          <div class="navbar-brand">
-        <a href="/admin/dashboard" class="d-flex align-items-center gap-2">
-          <img class="logo" src="/uploads/<%=settings.website_image ? settings.website_image : " logo.png"%>" alt="Logo"
-          style="height: 50px;width: 50px;">
-          <span class="text-white fs-5 text-nowrap fw-bold">
-            <%=settings.website_name ? settings.website_name : "Admin Panel" %>
-          </span>
-        </a>
-      </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/admin/dashboard">
+        <img class="logo" src="/uploads/<%=settings.website_image ? settings.website_image : " logo.png"%>" alt="Logo"
+        style="height: 50px;width: 50px;">
+        <span class="text-white fs-5 text-nowrap fw-bold">
+          <%=settings.website_name ? settings.website_name : "Admin Panel" %>
+        </span>
+      </a>
+      <button class="navbar-toggler bg-white text-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav-admin"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon text-warning"></span>
       </button>
-      <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
-        <ul class="navbar-nav gap-3">
-          <li class="nav-item">
-            <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/dashboard") { %>  text-warning <% }else{ %> text-white <% } %>" href="/admin/dashboard">Home</a>
+      <div class="collapse navbar-collapse " id="navbarNav-admin">
+        <ul class="navbar-nav ms-auto gap-3">
+          <li class="nav-item ">
+            <a class="nav-link px-4 py-1 rounded <% if(req.url==" /dashboard") { %> text-warning <% } else { %>
+                text-white <% } %>" href="/admin/dashboard">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/artcle") { %>  text-warning <% }else{ %> text-white <% } %>" href="/admin/artcle">Article</a>
+            <a class="nav-link px-4 py-1 rounded <% if(req.url==" /artcle") { %> text-warning <% } else { %> text-white
+                <% } %>" href="/admin/artcle">Article</a>
           </li>
-          <%if(role=="admin" ){%>
+          <% if(role=="admin" ) { %>
             <li class="nav-item">
-              <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/category") { %>  text-warning <% }else{ %> text-white <% } %>" href="/admin/category">Category</a>
+              <a class="nav-link px-4 py-1 rounded <% if(req.url==" /category") { %> text-warning <% } else { %>
+                  text-white <% } %>" href="/admin/category">Category</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/users") { %>  text-warning <% }else{ %> text-white <% } %>" href="/admin/users">Users</a>
+              <a class="nav-link px-4 py-1 rounded <% if(req.url==" /users") { %> text-warning <% } else { %> text-white
+                  <% } %>" href="/admin/users">Users</a>
             </li>
-            <%}%>
+            <% } %>
               <li class="nav-item">
-                <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/comments") { %>  text-warning <% }else{ %> text-white <% } %>" href="/admin/comments">Comments</a>
+                <a class="nav-link px-4 py-1 rounded <% if(req.url==" /comments") { %> text-warning <% } else { %>
+                    text-white <% } %>" href="/admin/comments">Comments</a>
               </li>
-              <%if(role=="admin" ){%>
+              <% if(role=="admin" ) { %>
                 <li class="nav-item">
-                  <a class="nav-link px-4 py-1 rounded  <% if(req.url=="/settings") { %>  text-warning <% }else{ %> text-white <% } %>"
-                      href="/admin/settings">Settings</a>
+                  <a class="nav-link px-4 py-1 rounded <% if(req.url==" /settings") { %> text-warning <% } else { %>
+                      text-white <% } %>" href="/admin/settings">Settings</a>
                 </li>
-                <%}%>
+                <% } %>
         </ul>
-      </div>
-           <div class="d-flex" role="search">
-          <a href="/admin/logout" class="admin-logout btn btn-warning">
-            <i class="fa fa-sign-out"></i> logout
-          </a>
-        </div>
+        <a href="/admin/logout" class="admin-logout btn btn-warning ms-auto">
+          <i class="fa fa-sign-out"></i> Logout
+        </a>
       </div>
     </div>
   </nav>
@@ -92,7 +91,7 @@
       </div>
     </div>
     <!-- /Footer -->
-   
+
 </body>
 
 </html>
