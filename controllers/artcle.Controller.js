@@ -2,10 +2,12 @@ import path from "path";
 import categoryModels from "../models/categoris.js";
 import newsModels from "../models/news.js";
 import settingmodels from "../models/setting.js"
+import commentModels from "../models/comment.js"
 import { validationResult } from "express-validator";
 import fs from "fs";
 import { fileURLToPath } from 'url';
 import { v2 as cloudinary } from 'cloudinary';
+import getCloudinaryPublicId from "../utilitis/cloudnaryPublicID.js"
 
 // Recreate __dirname
 const __filename = fileURLToPath(import.meta.url);
@@ -69,6 +71,21 @@ const addArtcle = async (req, res, next) => {
     if (!errors.isEmpty()) {
         const categories = await categoryModels.find({});
 
+        // uploded image delete
+        if(req.cloudinaryUrl){
+            const oldImagePublicId = getCloudinaryPublicId(req.cloudinaryUrl);
+            if (oldImagePublicId) {
+                try {
+                    await cloudinary.uploader.destroy(oldImagePublicId, { invalidate: true });
+                    console.log("Deleted from Cloudinary:", oldImagePublicId);
+                } catch (err) {
+                    if (err.message !== 'not found') {
+                        console.log("Error deleting from Cloudinary:", err);
+                    }
+                }
+            }
+        }
+ 
         // find all setting
         const settings = await settingmodels.findOne({});
 
@@ -83,6 +100,7 @@ const addArtcle = async (req, res, next) => {
                 req: req
             });
     }
+
     try {
         const { title, content, category } = req.body;
         const artcle = new newsModels({
@@ -184,20 +202,23 @@ const updateArtcle = async (req, res, next) => {
         artcle.title = title
         artcle.content = content
         artcle.category = category
-        if (req.file) {
-            const oldImagePublicId = oldImage.split('/').pop().split('.')[0];
-            if (oldImagePublicId) {
-                try {
-                    await cloudinary.uploader.destroy(oldImagePublicId);
-                    console.log("Deleted from Cloudinary:", oldImagePublicId);
-                } catch (err) {
-                    if (err.message !== 'not found') {
-                        console.log("Error deleting from Cloudinary:", err);
-                    }
-                }
+    if (req.file) {
+    const oldImagePublicId = getCloudinaryPublicId(oldImage);
+
+    if (oldImagePublicId) {
+        try {
+            await cloudinary.uploader.destroy(oldImagePublicId, { invalidate: true });
+            console.log("Deleted from Cloudinary:", oldImagePublicId);
+        } catch (err) {
+            if (err.message !== 'not found') {
+                console.log("Error deleting from Cloudinary:", err);
             }
-            artcle.image = req.cloudinaryUrl;
         }
+    }
+
+    artcle.image = req.cloudinaryUrl;
+}
+
         await artcle.save();
         res.redirect("/admin/artcle");
     } catch (error) {
@@ -227,10 +248,12 @@ const deleteArtcle = async (req, res, next) => {
                 });
             }
         }
-        const oldImagePublicId = artcle.image.split('/').pop().split('.')[0];
+
+        const oldImagePublicId = getCloudinaryPublicId(artcle.image);
+
         if (oldImagePublicId) {
             try {
-                await cloudinary.uploader.destroy(oldImagePublicId);
+                await cloudinary.uploader.destroy(oldImagePublicId, { invalidate: true });
                 console.log("Deleted from Cloudinary:", oldImagePublicId);
             } catch (err) {
                 if (err.message !== 'not found') {
@@ -238,7 +261,16 @@ const deleteArtcle = async (req, res, next) => {
                 }
             }
         }
+
+        
         await newsModels.findByIdAndDelete(req.params.id);
+
+        // delete artcle comments
+        const ThisArticleComments = await commentModels.find({ article: req.params.id });
+        if (ThisArticleComments && ThisArticleComments.length > 0) {
+            await commentModels.deleteMany({ article: req.params.id });
+        }
+
         res.send({ success: true });
     } catch (error) {
         return next({

@@ -21,6 +21,10 @@ role:{
     enum:["admin","author"],
     default:"author",
     required:true
+},
+timestamps:{
+    type:Date,
+    default:Date.now
 }
 })
 

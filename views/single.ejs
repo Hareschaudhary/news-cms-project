@@ -3,7 +3,7 @@
  
 
 
-<div class="row g-5">
+<div class="row g-5 mb-3">
    <div class="col-12">
 <div class="card rounded-0 border-0 shadow-sm">
   
@@ -52,21 +52,33 @@
       <h5 class="card-header">Add Comment</h5>
       <div class="card-body">
         <!-- Form Start -->
-        <form action="/single/<%=artcle._id%>/comment" method="POST" autocomplete="off">
+        <form  autocomplete="off" id="add-comment">
           <div class="mb-3">
             <label for="" class="form-label">Name</label>
-            <input type="text" value="" name="name" class="form-control" placeholder="Your Name" required>
+            <input type="text" value="" id="name" name="name" class="form-control" placeholder="Your Name" required>
+            <p class="alert alert-danger d-none mt-2" id="nameError"><i class="fa fa-exclamation-circle"></i> <span>
+              Please enter a name more than 3 characters
+            </span></p>
           </div>
           <div class="mb-3">
             <label for="" class="form-label">Email</label>
-            <input type="email" value="" name="email" class="form-control" placeholder="Your Email" required>
+            <input type="email" value="" id="email" name="email" class="form-control" placeholder="Your Email" required>
+            <p class="alert alert-danger d-none mt-2" id="emailError"><i class="fa fa-exclamation-circle"></i> <span>
+              Please enter a valid email
+            </span></p>
           </div>
           <div class="mb-3">
             <label for="" class="form-label">Comment</label>
-            <textarea name="content" class="form-control"></textarea>
+            <textarea name="content" id="content" class="form-control"></textarea>
+              <p class="alert alert-danger d-none mt-2" id="contentError"><i class="fa fa-exclamation-circle"></i> <span>
+              Please enter a comment more than 10 characters
+            </span></p>
           </div>
+          <p class="alert alert-success d-none">
+            <i class="fa fa-check-circle"></i>
+            <span>Your comment has been added successfully. It will be visible after moderation.</span>
+          </p>
           <input type="submit" name="save" class="btn btn-primary btn btn--with-icon px-3" value="Add Comment" required />
-           
         </form>
         <!-- Form End -->
       </div>
@@ -97,3 +109,68 @@
     </div>
     <%}%>
 </div>
+
+<script>
+  document.getElementById('add-comment').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const name = formData.get('name').trim();
+    const email = formData.get('email').trim();
+    const content = formData.get('content').trim();
+
+    if (!name || !email || !content) {
+      alert('All fields are required');
+      return;
+    }
+
+    if (name.length < 3) {
+      document.querySelector("#name").classList.add("border-danger");
+      document.querySelector("#nameError").classList.remove("d-none");
+      return;
+    }else{
+      document.querySelector("#name").classList.remove("border-danger");
+      document.querySelector("#nameError").classList.add("d-none");
+    }
+
+    if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{3,4}$/.test(email)) {
+     document.querySelector("#email").classList.add("border-danger");
+     document.querySelector("#emailError").classList.remove("d-none");
+      return;
+    }else{
+      document.querySelector("#email").classList.remove("border-danger");
+      document.querySelector("#emailError").classList.add("d-none");
+    }
+
+    if (content.length < 10) {
+      document.querySelector("#content").classList.add("border-danger");
+      document.querySelector("#contentError").classList.remove("d-none");
+      return;
+    }else{
+      document.querySelector("#content").classList.remove("border-danger");
+      document.querySelector("#contentError").classList.add("d-none");
+    }
+
+
+
+    fetch('/single/<%=artcle._id%>/comment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, content }),
+    }).then(res => res.json()).then(data => {
+      if (data.status === 200) {
+        this.reset();
+        document.querySelector('.alert-success').classList.remove('d-none');
+        document.querySelector('.alert-success span').textContent = data.message;
+        setTimeout(() => {
+          document.querySelector('.alert-success').classList.add('d-none');
+        }, 5000);
+      }else {
+        alert(data.message);
+      }
+    }).catch(err => {
+      console.log(err);
+  })
+  })
+</script>

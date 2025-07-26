@@ -1,30 +1,30 @@
 <div id="admin-content">
   <div class="container">
-        <div class="card border-0 shadow-sm">
-          <div class="card-header">
+        <div class="card border-0 shadow-sm p-2">
+          <div class="card-header bg-white">
             <div class="row g-4 align-items-center">
               <div class="col-6  order-sm-0 order-0">
                 <h1 class="admin-heading fs-3 m-0"><i class="fa fa-file-text"></i> All Articles</h1>
               </div>
               <div class="col-6  order-sm-2 order-2">
-                <a class="add-new btn btn-primary float-end" href="/admin/add-artcle">Add New Article</a>
+                <a class="add-new btn btn-secondary bg-secondary text-white float-end" href="/admin/add-artcle">Add New Article</a>
               </div>
             </div>
           </div>
-          <div class="card-body ">
-<table id="articleTable" class="display responsive nowrap" style="width:100%">
-  <thead>
-    <tr>
-      <th>S.NO</th>
-      <th>Title</th>
-      <th>Category</th>
-      <th>Author</th>
-      <th>Create At</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody class="overflow-hidden"></tbody>
-</table>
+          <div class="card-body bg-white">
+        <table id="articleTable" class="display responsive nowrap" style="width:100%">
+          <thead>
+            <tr>
+              <th>S.NO</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Author</th>
+              <th>Create At</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody class="overflow-hidden"></tbody>
+        </table>
           </div>
         </div>
   </div>
@@ -40,78 +40,24 @@
     let table = $('#articleTable').DataTable({
       data: tableData,
       responsive: true,
-      pageLength: 5,
+      pageLength: 7,
       lengthMenu: [5, 10, 15],
       searching: true,
-        ordering: true,
+      ordering: true,
       columns: [
-        {
-          data: null,
-          render: function (data, type, row, meta) {
-            return meta.row + 1;
-          },
-          className: 'text-sm-center',
-           responsivePriority: 1
-        },
-     {
-          data: 'title',
-          className: 'text-sm-center',
-           responsivePriority: 3,
-          render: function (data) {
-            if (!data) return '';
-            const words = data.trim().split(/\s+/);
-            if(window.innerWidth < 576){
-              if (words.length <= 4) return data;
-              return words.slice(0, 4).join(' ') + '...';
-            }
-            if (words.length <= 10) return data;
-            return words.slice(0, 10).join(' ') + '...';
-          }
-        },
-        { 
-          data: 'category.name', 
-          render: function (data, type, row) {
-            return row.category?.name || '';
-          },
-          className: 'text-sm-center',
-           responsivePriority: 4
-        },
-        {
-          data: 'author.fullname',
-          render: function (data, type, row) {
-            return row.author?.fullname || '';
-          },
-          className: 'text-sm-center',
-          responsivePriority: 2
-        },
-        {
-          data: 'createAt',
-          render: function (data) {
-            const date = new Date(data);
-            return date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-          },
-          className: 'text-sm-center',
-         responsivePriority: 5
-        },
-        {
-          data: '_id',
-          render: function (data, type, row) {
-            return `
-              <a class="btn btn-primary" href="/admin/update-artcle/${data}">
-                <i class="fa fa-edit"></i>
-              </a>
-              <button class="btn btn-danger delete-article ms-2" onclick="deletearticle('${data}')">
-                <i class="fa fa-trash"></i>
-              </button>
-            `;
-          },
-          orderable: false,
-          className: 'text-sm-center text-end',
-           responsivePriority: 2
-        }
+        {  data: null,  render: function (data, type, row, meta) { return meta.row + 1;  }, className: 'text-sm-center', responsivePriority: 1},
+        { data: 'title', responsivePriority: 3, render: function (data) {  if (!data) return '';  const words = data.trim().split(/\s+/); if(window.innerWidth < 576){  if (words.length <= 4) return data;  return words.slice(0, 4).join(' ') + '...';  }  if (words.length <= 10) return data; return words.slice(0, 10).join(' ') + '...';  } },
+        {  data: 'category.name',  render: function (data, type, row) {  return row.category?.name || ''; }, className: 'text-sm-center',  responsivePriority: 4},
+        { data: 'author.fullname', render: function (data, type, row) {  return row.author?.fullname || '';  },
+          className: 'text-sm-center',  responsivePriority: 2 },
+        { data: 'createAt', render: function (data) {  const date = new Date(data);  return date.toLocaleDateString('en-GB') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });},
+          className: 'text-sm-center', responsivePriority: 5  },
+        { data: '_id', render: function (data, type, row) { return `
+              <a class="btn btn-edit " href="/admin/update-artcle/${data}"> <i class="fa fa-edit text-white"></i></a>
+              <button class="btn btn-delete delete-article ms-2" onclick="deletearticle('${data}')"><i class="fa fa-trash text-white"></i> </button>
+            `;},orderable: false,className: 'text-sm-center text-end', responsivePriority: 2 }
       ]
     });
-
   });
 
   

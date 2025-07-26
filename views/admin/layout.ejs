@@ -21,16 +21,16 @@
     <%-typeof summernoteCss=="undefined" ? "" : summernoteCss%>
 </head>
 
-<body>
+<body >
 
-
+<header style="position: fixed;top: 0px;left:0px;width: 100%;right: 0px;z-index: 100;">
   <nav class="navbar navbar-expand-lg bg-dark">
     <div class="container">
       <a class="navbar-brand d-flex align-items-center gap-2" href="/admin/dashboard">
-        <img class="logo" src="/uploads/<%=settings.website_image ? settings.website_image : " logo.png"%>" alt="Logo"
+        <img class="logo" src="<%=settings.website_image ? settings.website_image : " logo.png"%>" alt="Logo"
         style="height: 50px;width: 50px;">
         <span class="text-white fs-5 text-nowrap fw-bold">
-          <%=settings.website_name ? settings.website_name : "Admin Panel" %>
+          <%=settings.website_name ? settings.website_name  : "Admin Panel" %>
         </span>
       </a>
       <button class="navbar-toggler bg-white text-warning" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav-admin"
@@ -40,30 +40,30 @@
       <div class="collapse navbar-collapse " id="navbarNav-admin">
         <ul class="navbar-nav ms-auto gap-3">
           <li class="nav-item ">
-            <a class="nav-link px-4 py-1 rounded <% if(req.url==" /dashboard") { %> text-warning <% } else { %>
+            <a class="nav-link px-4 py-1 rounded <% if(req.url=="/dashboard") { %> text-warning <% } else { %>
                 text-white <% } %>" href="/admin/dashboard">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-4 py-1 rounded <% if(req.url==" /artcle") { %> text-warning <% } else { %> text-white
+            <a class="nav-link px-4 py-1 rounded <% if(req.url=="/artcle" || req.url =="/add-artcle") { %> text-warning <% } else { %> text-white
                 <% } %>" href="/admin/artcle">Article</a>
           </li>
           <% if(role=="admin" ) { %>
             <li class="nav-item">
-              <a class="nav-link px-4 py-1 rounded <% if(req.url==" /category") { %> text-warning <% } else { %>
+              <a class="nav-link px-4 py-1 rounded <% if(req.url=="/category" || req.url =="/add-category") { %> text-warning <% } else { %>
                   text-white <% } %>" href="/admin/category">Category</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link px-4 py-1 rounded <% if(req.url==" /users") { %> text-warning <% } else { %> text-white
+              <a class="nav-link px-4 py-1 rounded <% if(req.url=="/users" || req.url =="/add-user") { %> text-warning <% } else { %> text-white
                   <% } %>" href="/admin/users">Users</a>
             </li>
             <% } %>
               <li class="nav-item">
-                <a class="nav-link px-4 py-1 rounded <% if(req.url==" /comments") { %> text-warning <% } else { %>
+                <a class="nav-link px-4 py-1 rounded <% if(req.url=="/comments") { %> text-warning <% } else { %>
                     text-white <% } %>" href="/admin/comments">Comments</a>
               </li>
               <% if(role=="admin" ) { %>
                 <li class="nav-item">
-                  <a class="nav-link px-4 py-1 rounded <% if(req.url==" /settings") { %> text-warning <% } else { %>
+                  <a class="nav-link px-4 py-1 rounded <% if(req.url=="/settings") { %> text-warning <% } else { %>
                       text-white <% } %>" href="/admin/settings">Settings</a>
                 </li>
                 <% } %>
@@ -74,9 +74,12 @@
       </div>
     </div>
   </nav>
+</header>
 
+<div class=" pt-5 mt-5 bg-light">
   <!-- /Menu Bar -->
   <%-body %>
+</div>
     <!-- Footer -->
     <div id="footer" style="background-color: #f2ece7;">
       <div class="container">

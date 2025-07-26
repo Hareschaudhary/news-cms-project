@@ -68,7 +68,7 @@ router.post('/index', loginValidation, adminLogin);
 router.get('/logout', logout);
 router.get('/dashboard',isLogin, dashboard);
 router.get('/settings',isLogin,isAdmin, settings);
-router.post('/save-settings',isLogin,isAdmin,upload.single("website_image"), savesettings);
+router.post('/save-settings',isLogin,isAdmin,upload.single("website_image"),uploadToCloudinary(), savesettings);
 
 // user CRUD routes
 router.get('/users',isLogin,isAdmin,allUsers);

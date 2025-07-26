@@ -243,21 +243,6 @@ const author = async (req, res, next) => {
 
 }
 
-const addComment = async (req, res, next) => {
-    const {name,email,content} = req.body;
-    try {
-
-        const comment = new commentModels({name,email,content,article:req.params.id});
-        await comment.save();
-        res.redirect(`/single/${req.params.id}`);
-    } catch (error) {
-           return next({
-            message: "server error",
-            status: 500,
-            error
-        });
-    }
- }
 const contact = async (req, res) => {
     res.render("contact",{layout:false});
 }
@@ -287,7 +272,6 @@ export {
     singleArticle,
     search,
     author,
-    addComment,
     sendEmail,
     contact
 }

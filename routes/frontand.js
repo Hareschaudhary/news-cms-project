@@ -7,10 +7,13 @@ import {
     singleArticle,
     search,
     author,  
-    addComment,
     sendEmail,
     contact
 } from '../controllers/side.Controller.js';
+
+import {
+    addComment
+} from '../controllers/comment.Controller.js'
 
 router.get('/', index);
 router.get('/category/:name',articleByCategory);

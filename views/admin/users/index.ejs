@@ -3,43 +3,94 @@
           <div class="row">
               <div class="col-md-12">
                 <div class="card border-0 shadow-sm">
-                  <div class="card-body">
+                  <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center py-3">
                            <h1 class="admin-heading fs-4"><i class="fa fa-users text-primary"></i> All Users</h1>
-                           <a class="add-new" href="/admin/add-user">add user</a>
+                           <a class="add-new btn btn-secondary bg-secondary text-white" href="/admin/add-user">add user</a>
                     </div>
-                    
-                      <div id="usersTable"></div>
                   </div>
+                   <div class="card-body">
+            <table  class="display responsive nowrap usersTable" style="width:100%">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th>Full Name</th>
+                  <th>User Name</th>
+                  <th>Role</th>
+                  <th>Create At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody class="overflow-hidden"></tbody>
+            </table>
+                    </div>
                 </div>
               </div>
           </div>
       </div>
   </div>
 
-    <!-- Bootstrap Bundle JS (includes Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Tabulator JS CDN -->
-  <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
   <script>
-    const tabledata =<%-JSON.stringify(users) %>
-   let table = new Tabulator("#usersTable", {
-    data:tabledata,
-    layout:"fitColumns",
-    pagination:true,
-    paginationSize:5,
-    paginationSizeSelector:[5, 10, 15],
-    columns:[
-      {title:"Full Name", field:"fullname",headerFilter:"input"},
-      {title:"User Name", field:"username"},
-      {title:"Role", field:"role"},
-      {title:"Action", formatter:function(cell, formatterParams, onRendered){
-        return `<a class="btn btn-primary" href="/admin/update-user/${cell.getData()._id}"><i class="fa fa-edit"></i></a> 
-        <button class="btn btn-danger delete-user ms-3" type="button" onclick="deleteUser('${cell.getData()._id}')"><i class="fa fa-trash"></i></button>`
-      }},
-      
-    ]
-   })
+    const tabledata =<%-JSON.stringify(users) %>;
+     $(document).ready(function () {
+    $('.usersTable').DataTable({
+      data: tabledata,
+      responsive: true,
+      pageLength: 7,
+      lengthMenu: [5, 10, 15],
+      searching: true,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + 1; // S.NO
+          },
+          className: "text-center"
+        },
+        {
+          data: 'fullname',
+          className: "text-start"
+        },
+        {
+          data: 'username',
+          className: "text-center"
+        },
+        {
+          data: 'role',
+          className: "text-center"
+        },
+        {
+          data: 'timestamps',
+          render: function (data, _type, _row) {
+            if (!data) return 'N/A';
+            const date = new Date(data);
+            return date.toLocaleDateString('en-GB') + ' ' +
+                   date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          },
+          className: "text-center"
+        },
+        {
+          data: '_id',
+          render: function (data, type, row) {
+            return `
+              <a class="btn btn-edit" href="/admin/update-user/${data}">
+                <i class="fa fa-edit text-white"></i>
+              </a>
+              <button class="btn btn-delete delete-category ms-2" onclick="deleteUser('${data}')">
+                <i class="fa fa-trash text-white"></i>
+              </button>
+            `;
+          },
+          searchable: false,
+          className: "text-end"
+        }
+      ]
+    });
+  });
+
 
    async function deleteUser(id){
     try{
@@ -61,7 +112,7 @@
    }
   </script>
 
-  <%- contentFor("tabulatorCss") %>
-    <!-- Tabulator css CDN -->
-  <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet" />
-  <!-- <link rel="stylesheet" href="/css/"> -->
+<%- contentFor("tabulatorCss") %>
+  <!-- datatable css CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">

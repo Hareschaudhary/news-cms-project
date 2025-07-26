@@ -33,6 +33,19 @@ const allComments = async (req, res, next) => {
     }
 }
 
+const addComment = async (req, res, next) => {
+    const {name,email,content} = req.body;
+    try {
+
+        const comment = new commentModels({name,email,content,article:req.params.id});
+        await comment.save();
+        res.send({ message: "Your comment has been added successfully. It will be visible after moderation." , status: 200});
+    } catch (error) {
+        res.send({ message: error.message, status: 500 });
+    }
+ }
+ 
+
 const updateComentStatus = async (req, res) => {
     try {
     const comment = await commentModels.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
@@ -60,5 +73,6 @@ const deleteComment = async (req, res) => {
 export {
     allComments,
     updateComentStatus,
-    deleteComment
+    deleteComment,
+    addComment
 }

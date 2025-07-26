@@ -1,83 +1,126 @@
 <div id="admin-content">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <h1 class="admin-heading"><i class="fa fa-gears"></i> All Categories</h1>
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" id="search-input" class="form-control w-100" placeholder="Search..." />
-                            </div>
-                               <div class="col-md-4 text-end">
-                                <div>
-                                    <a class="btn btn-primary" href="/admin/add-category">add category</a>
-                                </div>
-                            </div>
-                        </div>
-                     
-                        <div id="categoriesTable"></div>
-                    </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card border-0 shadow-sm">
+          <div class="card-header">
+               <div class="row">
+              <div class="col-6">
+                <h1 class="admin-heading fs-5 text-nowrap"><i class="fa fa-gears"></i> All Categories</h1>
+              </div>
+              <div class="col-6 text-end">
+                <div>
+                  <a class="btn btn-secondary bg-secondary text-white" href="/admin/add-category">add category</a>
                 </div>
+              </div>
             </div>
+          </div>
+          <div class="card-body">
+            <table  class="display responsive nowrap categoriesTable" style="width:100%">
+              <thead>
+                <tr>
+                  <th>S.NO</th>
+                  <th>Category Name</th>
+                  <th>Slug</th>
+                  <th>Descripction</th>
+                  <th>Create At</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody class="overflow-hidden"></tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
-    <!-- Bootstrap Bundle JS (includes Popper) -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Tabulator JS CDN -->
-  <script src="https://unpkg.com/tabulator-tables@5.5.0/dist/js/tabulator.min.js"></script>
-  <script>
-    const tabledata =<%-JSON.stringify(allCategory) %>
-   var table = new Tabulator("#categoriesTable", {
-    data:tabledata,
-    layout:"fitColumns",
-    pagination:true,
-    paginationSize:5,
-    paginationSizeSelector:[5, 10, 15],
-    columns:[
-      {title:"S.NO",formatter:"rownum", width:120, hozAlign: "center", headerHozAlign: "center"},
-      {title:"category Name", field:"name", hozAlign: "center", headerHozAlign: "center"},
-      {title:"slug", field:"slug", hozAlign: "center", headerHozAlign: "center"},
-      {title:"Action", formatter:function(cell, formatterParams, onRendered){
-        return `<a class="btn btn-primary" href="/admin/update-category/${cell.getData()._id}"><i class="fa fa-edit"></i></a> 
-        <button class="btn btn-danger delete-category ms-3" type="button" onclick="deleteUcategory('${cell.getData()._id}')"><i class="fa fa-trash"></i></button>`
-      }, hozAlign: "center", headerHozAlign: "center"},
-    ]
-   })
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script>
 
-  //  search tabledata
-   document.getElementById("search-input").addEventListener("keyup", function() {
-  let keyword = this.value.toLowerCase();
-  table.setFilter(function(data, filterParams) {
-    return Object.values(data).some(
-      value => String(value).toLowerCase().includes(keyword)
-    );
+  const tabledata = <%-JSON.stringify(allCategory)%>;
+
+  $(document).ready(function () {
+    $('.categoriesTable').DataTable({
+      data: tabledata,
+      responsive: true,
+      pageLength: 7,
+      lengthMenu: [5, 10, 15],
+      searching: true,
+      columns: [
+        {
+          data: null,
+          render: function (data, type, row, meta) {
+            return meta.row + 1; // S.NO
+          },
+          className: "text-center"
+        },
+        {
+          data: 'name',
+          className: "text-start"
+        },
+        {
+          data: 'slug',
+          className: "text-center"
+        },
+        {
+          data: 'description',
+          className: "text-center"
+        },
+                {
+          data: 'timestamps',
+          render: function (data, _type, _row) {
+            if (!data) return '';
+            const date = new Date(data);
+            return date.toLocaleDateString('en-GB') + ' ' +
+                   date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          },
+          className: "text-center"
+        },
+        {
+          data: '_id',
+          render: function (data, type, row) {
+            return `
+              <a class="btn btn-edit" href="/admin/update-category/${data}">
+                <i class="fa fa-edit text-white"></i>
+              </a>
+              <button class="btn btn-delete delete-category ms-2" onclick="deleteUcategory('${data}')">
+                <i class="fa fa-trash text-white"></i>
+              </button>
+            `;
+          },
+          searchable: false,
+          className: "text-end"
+        }
+      ]
+    });
   });
-});
 
-   async function deleteUcategory(id){
-    try{
-      if(confirm("Are you sure you want to delete this category?")){
-       const response = await fetch(`/admin/delete-category/${id}`,{
-         method:"DELETE"
-       });
-       if(response.ok){
-        window.location.reload()
+
+
+
+  async function deleteUcategory(id) {
+    try {
+      if (confirm("Are you sure you want to delete this category?")) {
+        const response = await fetch(`/admin/delete-category/${id}`, {
+          method: "DELETE"
+        });
+        if (response.ok) {
+          window.location.reload()
+        }
+        if (response.status == 400) {
+          let data = await response.json();
+          alert(data.message)
+        }
       }
-      if(response.status == 400){
-        let data = await response.json();
-        alert(data.message)
-      }
-      }
-    }catch(err){
+    } catch (err) {
       console.log(err)
     }
-   }
-  </script>
-  <%- contentFor("tabulatorCss") %>
-    <!-- Tabulator css CDN -->
-  <link href="https://unpkg.com/tabulator-tables@5.5.0/dist/css/tabulator_bootstrap5.min.css" rel="stylesheet" />
-  <!-- <link rel="stylesheet" href="/css/"> -->
+  }
+</script>
+<%- contentFor("tabulatorCss") %>
+  <!-- datatable css CDN -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">

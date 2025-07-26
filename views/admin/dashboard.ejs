@@ -1,35 +1,48 @@
   <div id="admin-content">
       <div class="container">
-          <div class="row">
+          <div class="row align-items-stretch g-3">
               <div class="col-md-12">
-                  <h1 class="admin-heading mb-3"><i class="fa fa-cubes"></i> <small>Hello <%=fullname%></small></h1>
+                <div class="card flex-row justify-content-start gap-2 align-items-center px-3 border-0 shadow-sm" >
+                  <i class="fa fa-user-circle text-warning" style="font-size: 50px;"></i>
+                  <div class="card-body">
+                    <h5 class="card-title "><%=fullname%></h5>
+                    <p class="card-text ">Welcome <%=fullname%>, this is your admin panel.</p>
+                  </div>
+                </div>
+                  
               </div>
               
-              <div class="col-md-3">
-                  <div class="admin-block" style="background-color: #CFE2FF;">
-                    <i class="fa fa-file-text"></i>
+              <div class="col-md-3 col-6">
+                  <div class="admin-block h-100" style="background-color: #CFE2FF;">
+                         <a href="/admin/artcle" class="btn">
+                          <i class="fa fa-file-text text-dark"></i>
+                         </a>
                     <h4>Articles</h4>
                     <h1><%= allArtclesCount %></h1>
                   </div>
               </div>
-              <div class="col-md-3">
-                  <div class="admin-block">
-                    <i class="fa fa-gears"></i>
+              <div class="col-md-3 col-6">
+                  <div class="admin-block h-100">
+                    <a href="/admin/category" class="btn">
+                       <i class="fa fa-gears text-dark"></i>
+                    </a>
                     <h4>Categories</h4>
                     <h1><%= allCategoriesCount %></h1>
                   </div>
               </div>
-               <div class="col-md-3">
-                  <div class="admin-block" style="background-color: #eceff3;">
-                    <i class="fa fa-gears"></i>
+               <div class="col-md-3 col-6">
+                  <div class="admin-block h-100" style="background-color: #eceff3;">
+                    <a href="/admin/artcle" class="btn"> <i class="fa fa-comments text-dark"></i></a>
                     <h4>All Comments</h4>
                     <h1><%= allCommentsCount ? allCommentsCount : 0 %></h1>
                   </div>
               </div>
               <%if(role=="admin" ){%>
-              <div class="col-md-3">
-                  <div class="admin-block" style="background-color: #D2F4EA;">
-                    <i class="fa fa-users"></i>
+              <div class="col-md-3 col-6">
+                  <div class="admin-block h-100" style="background-color: #D2F4EA;">
+                    <a href="/admin/artcle" class="btn">
+                    <i class="fa fa-users text-dark"></i>
+                    </a>
                     <h4>Users</h4>
                     <h1><%= allUsersCount %></h1>
                   </div>

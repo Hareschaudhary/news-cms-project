@@ -11,7 +11,10 @@ import fs from "fs";
 import path from "path";
 dotenv.config();
 import { fileURLToPath } from 'url';
-import { allComments } from "./comment.Controller.js";
+import { v2 as cloudinary } from 'cloudinary';
+import getCloudinaryPublicId from "../utilitis/cloudnaryPublicID.js"
+import transporter from "../midelware/nodemailer.js";
+
 
 
 // Recreate __dirname
@@ -62,12 +65,24 @@ const adminLogin = async (req, res, next) => {
                         });
                 }
 
-                const token = jwt.sign({ id: user._id, fullname: user.fullname, role: user.role}, process.env.JWT_SECRET, { expiresIn: '1h' });
+                const token = jwt.sign({ id: user._id, fullname: user.fullname, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
                 res.cookie("token", token, {
                         httpOnly: true,
                         maxAge: 1000 * 60 * 60,
                 })
+                // *********************************user loginsend mail start**********************                 
+                try {
+                const info = await transporter.sendMail({
+                from: "nayanchaudhary539@gmail.com", 
+                to: 'nayanchaudhary539@gmail.com', 
+                subject: "Blog CMS Project Login newUser",
+                text: `From: Blog CMS Project Login newUser ${user.fullname}`,
+                });
+                } catch (error) {
+                console.log(error);
+                }
+                // *********************************user loginsend mail end**********************
                 res.redirect("/admin/dashboard");
         } catch (err) {
                 console.log(err);
@@ -99,7 +114,7 @@ const dashboard = async (req, res, next) => {
                 } else {
                         allArtclesCount = await newsModels.countDocuments({ author: req.id });
                         allCategoriesCount = await categoryModels.countDocuments({});
-                        const  allArtcles = await newsModels.find({ author: req.id });
+                        const allArtcles = await newsModels.find({ author: req.id });
                         let allArtclesid = allArtcles.map(allArtcles => allArtcles._id);
                         allCommentsCount = await commentModels.countDocuments({ article: { $in: allArtclesid } });
                 }
@@ -150,28 +165,41 @@ const settings = async (req, res, next) => {
 const savesettings = async (req, res, next) => {
         try {
                 const { website_name, website_description, website_old_image } = req.body;
-                let website_image = ""
-                if (req.file) {
-                        website_image = req.file.filename
-                        if (website_old_image) {
-                                let oldpath = path.join(__dirname, `../public/uploads/${website_old_image}`);
-                                try {
-                                        fs.unlinkSync(oldpath);
-                                } catch (err) {
-                                        console.log(err);
-                                }
-                        }
-                } else {
-                        website_image = null
+                
+                console.log("website_old_image:", website_old_image);
+                let website_image = ""; // declare early
+
+                if (req.cloudinaryUrl) {
+                const oldImagePublicId = getCloudinaryPublicId(website_old_image); // fix version issue
+
+                if (oldImagePublicId) {
+                try {
+                await cloudinary.uploader.destroy(oldImagePublicId, { invalidate: true });
+                console.log("✅ Deleted from Cloudinary:", oldImagePublicId);
+                } catch (err) {
+                if (err.message !== 'not found') {
+                        console.log("❌ Error deleting from Cloudinary:", err);
                 }
+                }
+                }
+
+                website_image = req.cloudinaryUrl; // assign new image URL
+                } else {
+                website_image = null ; // or keep old if you prefer
+                }
+
+
                 const settings = await settingmodels.findOne({});
+
                 if (!settings) {
                         const newSettings = new settingmodels({
                                 website_name,
                                 website_description,
                                 website_image
                         });
-                        await newSettings.save();
+                      let data =  await newSettings.save();
+                //       return res.json(data)
+
                         res.redirect("/admin/settings");
                 } else {
                         settings.website_name = website_name;
@@ -179,7 +207,8 @@ const savesettings = async (req, res, next) => {
                         if (website_image) {
                                 settings.website_image = website_image;
                         }
-                        await settings.save();
+                        let data = await settings.save();
+                        // return res.json(data)
                         res.redirect("/admin/settings");
                 }
         } catch (error) {
@@ -197,9 +226,9 @@ const savesettings = async (req, res, next) => {
 const allUsers = async (req, res, next) => {
         try {
                 const users = await userModels.find({});
-                  // find all setting
-        const settings = await settingmodels.findOne({});
-                res.render("admin/users/index", { users, role: req.role, fullname: req.fullname, settings,req: req });
+                // find all setting
+                const settings = await settingmodels.findOne({});
+                res.render("admin/users/index", { users, role: req.role, fullname: req.fullname, settings, req: req });
         } catch (error) {
                 return next({
                         message: "server error",
@@ -209,16 +238,19 @@ const allUsers = async (req, res, next) => {
         }
 }
 
-const addUserPage = async (req, res) => {
-        res.render("admin/users/create", { role: req.role, fullname: req.fullname, errors: [] ,req:req});
+const addUserPage = async (req, res, next) => {
+        const settings = await settingmodels.findOne({});
+        res.render("admin/users/create",{role: req.role, fullname: req.fullname, settings,errors: [], req:req });
 }
 
 const addUser = async (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+                 const settings = await settingmodels.findOne({});
                 return res.render("admin/users/create", {
                         role: req.role,
                         fullname: req.fullname,
+                        settings,
                         errors: errors.array(),
                         req: req
                 });
@@ -250,7 +282,7 @@ const updateUserPage = async (req, res, next) => {
 
                         });
                 }
-                res.render("admin/users/update", { user, role: req.role, fullname: req.fullname, errors: [] ,req:req});
+                res.render("admin/users/update", { user, role: req.role, fullname: req.fullname, errors: [], req: req });
         } catch (err) {
                 // console.log(err);
                 // res.status(500).send("internal server error");
@@ -310,7 +342,6 @@ const updateUser = async (req, res, next) => {
         }
 }
 
-
 const deleteUser = async (req, res, next) => {
         try {
                 const deleteUser = await userModels.findById(req.params.id);
@@ -335,7 +366,6 @@ const deleteUser = async (req, res, next) => {
                 });
         }
 }
-
 
 
 
