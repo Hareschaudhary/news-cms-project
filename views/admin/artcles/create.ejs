@@ -26,6 +26,7 @@
                 </textarea>
                  <%}else{%>
                 <textarea name="content" id="summernote" class="form-control" rows="5" required></textarea>
+                <button id="summernoteBtn">click here</button>
                 <%}%>
               </div>
               <div class="mb-3">
@@ -69,9 +70,21 @@
     $('#summernote').summernote({
       placeholder: 'Start typing...',
       tabsize: 2,
-      height: 200
+      height: 200,
+      toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'italic', 'underline', 'fontsize', ]],
+        ['fontname', ['fontname']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph', 'codeview',]],
+        ['table', ['table',]],
+        // ['insert', ['link', 'picture']],
+        ['view', [ 'codeview', 'help']]
+      ],
     });
   });
+
+
 </script>
 
 <%- contentFor("summernoteCss") %>

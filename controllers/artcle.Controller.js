@@ -67,9 +67,14 @@ const addArtclePage = async (req, res, next) => {
 }
 
 const addArtcle = async (req, res, next) => {
+ 
+    // validaction
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+        // find all category
         const categories = await categoryModels.find({});
+        // find all setting
+        const settings = await settingmodels.findOne({});
 
         // uploded image delete
         if(req.cloudinaryUrl){
@@ -85,9 +90,6 @@ const addArtcle = async (req, res, next) => {
                 }
             }
         }
- 
-        // find all setting
-        const settings = await settingmodels.findOne({});
 
         return res.render("admin/artcles/create",
             {
@@ -103,6 +105,7 @@ const addArtcle = async (req, res, next) => {
 
     try {
         const { title, content, category } = req.body;
+         
         const artcle = new newsModels({
             title,
             content,
@@ -140,8 +143,8 @@ const updateArtclePage = async (req, res, next) => {
                 });
             }
         }
-        const categories = await categoryModels.find({});
 
+        const categories = await categoryModels.find({});
         // find all setting
         const settings = await settingmodels.findOne({});
         res.render("admin/artcles/update", {

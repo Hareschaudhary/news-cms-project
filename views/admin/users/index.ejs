@@ -56,11 +56,11 @@
         },
         {
           data: 'username',
-          className: "text-center"
+          className: "text-sm-center"
         },
         {
           data: 'role',
-          className: "text-center"
+          className: "text-sm-center"
         },
         {
           data: 'timestamps',
@@ -70,7 +70,7 @@
             return date.toLocaleDateString('en-GB') + ' ' +
                    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           },
-          className: "text-center"
+          className: "text-sm-center"
         },
         {
           data: '_id',
@@ -85,7 +85,7 @@
             `;
           },
           searchable: false,
-          className: "text-end"
+          className: "text-sm-end"
         }
       ]
     });

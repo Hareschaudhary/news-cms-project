@@ -18,27 +18,27 @@
           <%- artcle .content %>
       </p>
   </div>
-     <div class="card-footer d-flex justify-content-between">
-      <ul class="list-inline d-flex gap-4">
-        <li><a class="text-dark" href="/category/<%=artcle.category.slug%>">
+     <div class="card-footer d-sm-flex justify-content-between">
+      <ul class="list-inline d-flex gap-4 flex-wrap">
+        <li><a class="text-dark text-nowrap" href="/category/<%=artcle.category.slug%>">
           <i class="fa fa-tags text-warning"></i>
               <%=artcle.category.name%>
               </a>
         </li>
         <li>
-           <a class="blog-author text-dark" href='/author/<%=artcle.author._id%>'>
+           <a class="blog-author text-dark text-nowrap" href='/author/<%=artcle.author._id%>'>
              <i class="fa fa-pencil-square-o text-warning"></i>
        <%=artcle.author.fullname%>
       </a>
         </li>
       </ul>
       <ul class="list-inline d-flex gap-4">
-      <li class="published-date">
+      <li class="published-date text-nowrap">
         <i class="fa fa-calendar text-warning me-2"></i>   
       <%=artcle.createAt.toLocaleString('en-GB', { day: 'numeric' , month: 'long' , year: 'numeric'
           }).split(' ').join(' -')%>
       </span></li>
-      <li class="comments"><a class="text-dark" href="#ReadComments">
+      <li class="comments"><a class="text-dark text-nowrap" href="#ReadComments">
         <i class="fa fa-comment text-warning me-2"></i>
         <span class="numero"><%=commentcount%></span></a></li>
     </ul>

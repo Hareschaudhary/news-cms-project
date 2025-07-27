@@ -4,10 +4,7 @@
       <div class="card-header">
    <div class="row">
       <div class="col-md-7">
-        <h1 class="admin-heading"><i class="fa fa-comments"></i> Comments Management</h1>
-      </div>
-      <div class="col-md-5">
-            <input type="text" id="search-input" class="form-control w-100" placeholder="Search..." />
+        <h1 class="admin-heading fs-5"><i class="fa fa-comments"></i> Comments Management</h1>
       </div>
       </div>
         <div class="card-body">
@@ -110,15 +107,21 @@
         },
         {
           data: 'article.title',
-          className: "text-center"
+          render: function(data){
+            if(window.innerWidth < 576){
+             return data.split(" ").slice(0,3).join(" ");
+            }
+            return data
+          },
+          className: "text-sm-center"
         },
         {
           data: 'content',
-          className: "text-center"
+          className: "text-sm-center"
         },
             {
           data: 'status',
-          className: "text-center"
+          className: "text-sm-center"
         },
         {
           data: 'createdAt',
@@ -128,7 +131,7 @@
             return date.toLocaleDateString('en-GB') + ' ' +
                    date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
           },
-          className: "text-center"
+          className: "text-sm-center"
         },
         {
           data: '_id',
@@ -143,7 +146,7 @@
             `;
           },
           searchable: false,
-          className: "text-end"
+          className: "text-sm-end"
         }
       ]
     });
