@@ -3,6 +3,7 @@ const app = express();
 import mongoose from 'mongoose';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import expressEjsLayouts from 'express-ejs-layouts';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
@@ -20,6 +21,11 @@ const __dirname = path.dirname(__filename);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+const uploadDir = path.join(__dirname, 'public/uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+  console.log("Created missing 'public/uploads' folder");
+}
 app.use(cookieParser());
 app.use(expressEjsLayouts);
 app.set("layout", "layout");
